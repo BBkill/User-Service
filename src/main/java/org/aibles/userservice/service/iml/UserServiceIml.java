@@ -6,6 +6,9 @@ import org.aibles.userservice.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Optional;
+
 @Service
 public class UserServiceIml implements UserService {
 
@@ -19,9 +22,19 @@ public class UserServiceIml implements UserService {
 
 
     @Override
-    public User createUser(User user) {
-        User userCreated = userRepository.save(user);
-        return userCreated;
+    public void createUser(User user) {
+//        Optional<User> userById= userRepository.findUserById(user.getId());
+//        if(userById.isPresent())
+//        {
+//            throw new IllegalStateException("id is taken");
+//        }
+        userRepository.save(user);
+        //return userCreated;
+    }
+
+    @Override
+    public List<User> getAllUser() {
+        return userRepository.findAll();
     }
 
     @Override
@@ -29,4 +42,13 @@ public class UserServiceIml implements UserService {
         return userRepository.findById(id).orElse(null);
     }
 
+    @Override
+    public void deleteAllUser() {
+        userRepository.deleteAll();
+    }
+
+    @Override
+    public void deleteUser(int id) {
+        userRepository.delete(userRepository.getById(id));
+    }
 }
