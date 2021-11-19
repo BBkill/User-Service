@@ -76,7 +76,7 @@ public class UserController {
     @PutMapping(path = "/{id}")
     public String updateUser(@RequestBody User user)
     {
-        userService.createUser(user);
+        userService.updateUser(user);
         return "updated";
     }
 

@@ -48,6 +48,11 @@ public class UserServiceIml implements UserService {
     }
 
     @Override
+    public void updateUser(User user) {
+        userRepository.save(user);
+    }
+
+    @Override
     public void deleteUser(int id) {
         userRepository.delete(userRepository.getById(id));
     }
