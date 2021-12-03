@@ -8,34 +8,39 @@ import java.io.Serializable;
 import java.util.Objects;
 
 @Entity
-@Table(name = "userinfo")
+@Table(name = "users")
 public class User implements Serializable {
+
+
     @Id
     @Column(name = "id")
     private int id;
 
     @Column(name = "name")
     private String name;
- //   private int age;
+
 
     @Column(name = "age")
     private Integer age;
 
+    @Column(name = "email")
+    private String email;
+
     public User() {
     }
 
-    public User(int id, String name, int age) {
-        this.id = id;
+    public User(String name, int age, String email) {
         this.name = name;
         this.age = age;
+        this.email =email;
     }
 
     public int getId() {
         return id;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public String getEmail() {
+        return email;
     }
 
     public String getName() {
@@ -52,6 +57,10 @@ public class User implements Serializable {
 
     public void setAge(int age) {
         this.age = age;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     @Override

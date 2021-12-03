@@ -2,6 +2,7 @@ package org.aibles.userservice.controller;
 
 import org.aibles.userservice.model.User;
 import org.aibles.userservice.repository.UserRepository;
+import org.aibles.userservice.service.Exception.UserNotFoundException;
 import org.aibles.userservice.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -9,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
+import java.nio.file.attribute.UserPrincipalNotFoundException;
 import java.util.List;
 
 
@@ -19,67 +21,47 @@ public class UserController {
     private UserService userService;
 
     //get user by id
+
     @GetMapping("/{id}")
     public ResponseEntity<User> getUser(@PathVariable("id") int id) {
         User user = userService.getUser(id);
-        if (user != null)
-        {
-            return ResponseEntity.status(HttpStatus.OK).body(user);
-        }
-        else return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        return ResponseEntity.ok(user);
     }
+//    @GetMapping("/{email}")
+//    public ResponseEntity<User> getUser(@PathVariable("email") String email) {
+//        User user = userService.getUser(email);
+//        return ResponseEntity.ok(user);
+//    }
 
     //get all user in db
     @GetMapping
-    public List<User> getUser()
+    public ResponseEntity<List<User>> getUser()
     {
-        return userService.getAllUser();
+        List<User> userList = userService.getAllUser();
+        return ResponseEntity.ok(userList);
     }
 
 
     //put user which is not in db
     @PostMapping
-    public String createUser(@RequestBody User newUser)
+    public ResponseEntity<User> createUser(@RequestBody User user)
     {
-        User oldUser = userService.getUser(newUser.getId());
-        if(oldUser == null)
-        {
-            userService.createUser(newUser);
-            return "user is saved";
-        }
-        return "id is taken";
+        return ResponseEntity.ok(userService.createUser(user));
     }
 
-    //delete user which has id in db
-    @DeleteMapping(path = "/{id}")
-    public String deleteUser(@PathVariable("id") int id)
+    //delete user which has email in db
+    @DeleteMapping(path = "/email/{email}")
+    public ResponseEntity<User> deleteUser(@PathVariable("email") String email)
     {
-        User user = userService.getUser(id);
-        if (user != null)
-        {
-            userService.deleteUser(id);
-            return "delete successful";
-        }
-        return "user not found";
+        User user = userService.getUser(email);
+        return ResponseEntity.ok(userService.deleteUser(user));
     }
-
-    //delete all user in db
-    @DeleteMapping
-    public String deleteAllUser()
-    {
-        userService.deleteAllUser();
-        return "delete all user successful";
-    }
-
 
     //update user :v
-    @PutMapping(path = "/{id}")
-    public String updateUser(@RequestBody User user)
+    @PutMapping
+    public ResponseEntity<User> updateUser(@RequestBody User user)
     {
-        userService.updateUser(user);
-        return "updated";
+        return ResponseEntity.ok(userService.updateUser(user));
     }
-
-
 
 }
