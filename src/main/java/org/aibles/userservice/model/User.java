@@ -1,9 +1,11 @@
 package org.aibles.userservice.model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+
+
+
+import javax.persistence.*;
+
+import javax.validation.constraints.*;
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -16,13 +18,20 @@ public class User implements Serializable {
     @Column(name = "id")
     private int id;
 
+    //@NotNull(message = "name can not be null")
+    @NotBlank(message = "name can not be null")
     @Column(name = "name")
     private String name;
 
 
+    //@NotNull(message = "age can not be null")
+    @NotBlank(message = "age can not be null")
+    @Min(value = 17, message = "must be over 18")
     @Column(name = "age")
     private Integer age;
 
+    //@NotNull(message = "email can not be null")
+    @NotBlank(message = "email can not be null")
     @Column(name = "email")
     private String email;
 
@@ -68,7 +77,7 @@ public class User implements Serializable {
         if (this == o) return true;
         if (!(o instanceof User)) return false;
         User user = (User) o;
-        return id == user.id && age == user.age && name.equals(user.name);
+        return id == user.id && age.equals(user.age) && name.equals(user.name);
     }
 
     @Override

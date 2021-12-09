@@ -1,21 +1,21 @@
 package org.aibles.userservice.service.iml;
 
+import org.aibles.userservice.Validate.Validator;
 import org.aibles.userservice.model.User;
 import org.aibles.userservice.repository.UserRepository;
+import org.aibles.userservice.service.Exception.UserAlreadyExited;
+import org.aibles.userservice.service.Exception.UserNotFoundException;
 import org.aibles.userservice.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.aibles.userservice.service.Exception.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class UserServiceIml implements UserService {
 
     private final UserRepository userRepository;
-
+    private final Validator validator = new Validator();
     @Autowired
     public UserServiceIml(UserRepository userRepository)
     {
@@ -23,11 +23,14 @@ public class UserServiceIml implements UserService {
     }
 
     @Override
-    public User createUser(User user) {
-        Optional<User> userById= userRepository.findUserByEmail(user.getEmail());
-        if(userById.isPresent())
+    public User createUser(User user) throws UserAlreadyExited {
+        validator.validateUserName(user);
+        validator.validateUserAge(user);
+        validator.validateUserEmail(user);
+        User userByEmail = userRepository.findUserByEmail(user.getEmail()).orElse(null);
+        if(userByEmail != null)
         {
-            throw new UserAldreadyExited("Email already Exited");
+            throw new UserAlreadyExited();
         }
         else
         {
@@ -44,21 +47,21 @@ public class UserServiceIml implements UserService {
         }
         else
         {
-            throw new UserNotFoundException("No users");
+            throw new UserNotFoundException();
         }
 
     }
 
     @Override
     public User getUser(int id) {
-        User user = userRepository.findUserById(id).orElse(null);
+        User user = userRepository.findById(id).orElse(null);
         if(user != null)
         {
             return user;
         }
         else
         {
-            throw new UserNotFoundException("User Not Found");
+            throw new UserNotFoundException();
         }
     }
 
@@ -71,12 +74,15 @@ public class UserServiceIml implements UserService {
         }
         else
         {
-            throw new UserNotFoundException("User Not Found");
+            throw new UserNotFoundException();
         }
     }
 
     @Override
     public User updateUser(User user) {
+        validator.validateUserName(user);
+        validator.validateUserAge(user);
+        validator.validateUserEmail(user);
         User oldUser = userRepository.findUserByEmail(user.getEmail()).orElse(null);
         if (oldUser != null)
         {
@@ -86,7 +92,7 @@ public class UserServiceIml implements UserService {
         }
         else
         {
-            throw new UserNotFoundException("User Not Found");
+            throw new UserNotFoundException();
         }
     }
 
@@ -100,7 +106,7 @@ public class UserServiceIml implements UserService {
         }
         else
         {
-            throw new UserNotFoundException("User Not Found");
+            throw new UserNotFoundException();
         }
     }
 

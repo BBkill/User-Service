@@ -1,32 +1,44 @@
 package org.aibles.userservice.controller;
 
 import org.aibles.userservice.model.User;
-import org.aibles.userservice.repository.UserRepository;
-import org.aibles.userservice.service.Exception.UserNotFoundException;
 import org.aibles.userservice.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-
-import java.nio.file.attribute.UserPrincipalNotFoundException;
+import javax.validation.Valid;
 import java.util.List;
 
 
+//import org.springframework.validation.annotation.Validated;
+
+//http://localhost:8080/api/v1/userinfo
 @RestController
 @RequestMapping("/api/v1/userinfo")
 public class UserController {
     @Autowired
     private UserService userService;
 
-    //get user by id
 
+    //put user which is not in db
+    @PostMapping
+    public ResponseEntity<User> createUser(@Valid @RequestBody User user)
+    {
+        User users = userService.createUser(user);
+        return new ResponseEntity<User>(users, HttpStatus.OK);
+    }
+
+
+    //get user by id
     @GetMapping("/{id}")
     public ResponseEntity<User> getUser(@PathVariable("id") int id) {
         User user = userService.getUser(id);
-        return ResponseEntity.ok(user);
+        return new ResponseEntity<User>(user, HttpStatus.OK);
     }
+
+
+
 //    @GetMapping("/{email}")
 //    public ResponseEntity<User> getUser(@PathVariable("email") String email) {
 //        User user = userService.getUser(email);
@@ -42,13 +54,6 @@ public class UserController {
     }
 
 
-    //put user which is not in db
-    @PostMapping
-    public ResponseEntity<User> createUser(@RequestBody User user)
-    {
-        return ResponseEntity.ok(userService.createUser(user));
-    }
-
     //delete user which has email in db
     @DeleteMapping(path = "/email/{email}")
     public ResponseEntity<User> deleteUser(@PathVariable("email") String email)
@@ -59,7 +64,7 @@ public class UserController {
 
     //update user :v
     @PutMapping
-    public ResponseEntity<User> updateUser(@RequestBody User user)
+    public ResponseEntity<User> updateUser(@Valid @RequestBody User user)
     {
         return ResponseEntity.ok(userService.updateUser(user));
     }
